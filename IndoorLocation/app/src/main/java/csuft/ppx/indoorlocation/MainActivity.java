@@ -3,6 +3,8 @@ package csuft.ppx.indoorlocation;
 import android.app.Activity;
 import android.bluetooth.BluetoothDevice;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -15,8 +17,14 @@ import csuft.ppx.indoorlocation.beacon.BeaconOperation;
 
 public class MainActivity extends Activity {
 
-    private TextView tv;
+    private static TextView tv;
     private Button btn;
+    public static Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            tv.setText(msg.obj.toString());
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +38,7 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View view) {
                 BeaconOperation.getInstance().init(MainActivity.this);
-                BeaconOperation.getInstance().startScanLe(500);
+                BeaconOperation.getInstance().startScanLe(100);
             }
         });
     }
