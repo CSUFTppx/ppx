@@ -12,6 +12,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import csuft.ppx.indoorlocation.beacon.utils.DefaultStaticValues;
+import csuft.ppx.indoorlocation.position.Point;
+import csuft.ppx.indoorlocation.position.PositionUtil;
 
 /**
  * Created by zf on 2017/3/27.
@@ -93,6 +95,8 @@ public class BeaconCache {
                         Log.i(TAG, "beacon列表过短，丢弃");
                     }
                 }
+                Point point=PositionUtil.getIstance().Position(result);
+                System.out.println("定位坐标为   ("+point.getX()+","+point.getY()+")");
                 cache.clear();//清空缓存区
             } else {
                 Log.i(TAG, "缓存区为空");

@@ -4,6 +4,7 @@ import android.bluetooth.BluetoothDevice;
 
 import java.util.Comparator;
 
+import csuft.ppx.indoorlocation.beacon.utils.DataConvertUtils;
 import csuft.ppx.indoorlocation.beacon.utils.DefaultStaticValues;
 
 /**
@@ -79,6 +80,28 @@ public class Beacon {
         beacon.measuredPower = (int) data[startByte + 24];
         //************uuid未完成
 
+
+// AirLocate:
+        // 02 01 1a 1a ff 4c 00 02 15 # Apple's fixed iBeacon advertising prefix
+        // e2 c5 6d b5 df fb 48 d2 b0 60 d0 f5 a7 10 96 e0 # iBeacon profile
+        // uuid
+        // 00 00 # major
+        // 00 00 # minor
+        // c5 # The 2's complement of the calibrated Tx Power
+        byte[] proximityUuidBytes = new byte[16];
+        System.arraycopy(data, startByte + 4, proximityUuidBytes, 0, 16);
+        String hexString = DataConvertUtils.bytesToHexString(proximityUuidBytes);
+        StringBuilder sb = new StringBuilder();
+        sb.append(hexString.substring(0, 8));
+        sb.append("-");
+        sb.append(hexString.substring(8, 12));
+        sb.append("-");
+        sb.append(hexString.substring(12, 16));
+        sb.append("-");
+        sb.append(hexString.substring(16, 20));
+        sb.append("-");
+        sb.append(hexString.substring(20, 32));
+        beacon.uuid = sb.toString();
         return beacon;
     }
 
