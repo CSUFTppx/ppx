@@ -22,6 +22,8 @@ public class Beacon {
     public int measuredPower = DefaultStaticValues.DEFAULT_BEACON_MEASURED_POWER_FALSE;
     //发射功率
     public int txPower = DefaultStaticValues.DEFAULT_SKY_BEACON_TXPOWER_FALSE;
+    //距离
+    public double distance = -1;
 
     public static Beacon resolveFromBroadcast(BluetoothDevice device, int rssi, byte[] data) {
         Beacon beacon = new Beacon();
@@ -102,7 +104,25 @@ public class Beacon {
         sb.append("-");
         sb.append(hexString.substring(20, 32));
         beacon.uuid = sb.toString();
+
+        //计算距离
+        beacon.distance = calculateAccuracy(beacon.measuredPower, beacon.rssi);
+
         return beacon;
     }
 
+    private  static double calculateAccuracy(int txPower, double rssi) {
+        if (rssi == 0) {
+            return -1.0; // if we cannot determine accuracy, return -1.
+        }
+
+        double ratio = rssi*1.0/txPower;
+        if (ratio < 1.0) {
+            return Math.pow(ratio,10);
+        }
+        else {
+            double accuracy =  (0.89976)*Math.pow(ratio,7.7095) + 0.111;
+            return accuracy;
+        }
+    }
 }

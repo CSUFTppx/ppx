@@ -95,6 +95,17 @@ public class BeaconCache {
                         Log.i(TAG, "beacon列表过短，丢弃");
                     }
                 }
+                Collections.sort(result, new Comparator<Beacon>() {
+                    @Override
+                    public int compare(Beacon o1, Beacon o2) {
+                        return (int) (o1.distance - o2.distance);
+                    }
+                });
+                for (int i = 0; i < result.size(); i++) {
+                    System.out.println(result.get(i).mac + " | " + result.get(i).measuredPower + " | " + result.get(i).rssi + " | " + result.get(i).distance);
+                }
+                result = result.subList(0, 3);
+                System.out.println("result size:"+result.size());
                 Point point=PositionUtil.getIstance().Position(result);
                 System.out.println("定位坐标为   ("+point.getX()+","+point.getY()+")");
                 cache.clear();//清空缓存区

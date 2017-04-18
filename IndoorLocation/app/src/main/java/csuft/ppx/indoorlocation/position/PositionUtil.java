@@ -3,7 +3,9 @@ package csuft.ppx.indoorlocation.position;
 import android.widget.ArrayAdapter;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import csuft.ppx.indoorlocation.beacon.Beacon;
 
@@ -13,10 +15,12 @@ import csuft.ppx.indoorlocation.beacon.Beacon;
 
 //定位工具类
 public class PositionUtil {
+    private static Map<String,Point> BeaconPoints=new HashMap<>();
     //定义接受到的beacon转化为的圆的arraylist
     private List<Circular> circulars=new ArrayList<>();
     //定义当前的位置
     private Point point;
+
     private static volatile PositionUtil positionUtil;
     //初始化
     public static PositionUtil getIstance(){
@@ -28,6 +32,7 @@ public class PositionUtil {
 
     private PositionUtil() {
         // TODO Auto-generated constructor stub
+        PointInital();
     }
 
     public Point Position(List<Beacon> beacons){
@@ -42,6 +47,18 @@ public class PositionUtil {
         return point;
     }
 
+    //根据建模，把每个beacon分别赋予一个坐标点
+    private void PointInital(){
+       // BeaconPoints.put("19:18:FC:03:B6:AD",new Point(5,5));
+        BeaconPoints.put("19:18:FC:03:B6:A0",new Point(2.4,4));
+        BeaconPoints.put("19:18:FC:03:B6:AA",new Point(0,0));
+        //BeaconPoints.put("19:18:FC:03:B6:AB",new Point(2.4,12));
+        BeaconPoints.put("19:18:FC:03:B6:C2",new Point(0,8));
+        //BeaconPoints.put("19:18:FC:03:B6:BA",new Point(5,5));
+       BeaconPoints.put("19:18:FC:03:07:D2",new Point(2.4,12.03));
+       // BeaconPoints.put("19:18:FC:03:07:AD",new Point(5,5));
+       // BeaconPoints.put("19:18:FC:03:07:A4",new Point(5,5));
+    }
     //根据给定的Beacon，把他转化为相对应的圆
     private static Circular toCircular(Beacon beacon){
         Circular c=null;
@@ -52,18 +69,9 @@ public class PositionUtil {
         double radius=calculateAccuracy(txPower, rssi);
         //根据，uuId来获取圆心
         String MAC=beacon.mac;
-        if(MAC.equals("19:18:FC:03:07:A4")){
-            X=0;
-            Y=0;
-        }
-        else if (MAC.equals("19:18:FC:03:07:AD")){
-            X=0;
-            Y=4;
-        }
-        else if(MAC.equals("19:18:FC:03:07:D2")){
-            X=3.3;
-            Y=2;
-        }
+        //根据MAC来获取当前Beacon的坐标的
+        X=BeaconPoints.get(MAC).getX();
+        Y=BeaconPoints.get(MAC).getY();
         if(X==-1||Y==-1){
             System.out.print("出错");
             return null;
@@ -87,6 +95,7 @@ public class PositionUtil {
         Point p2=intersect(circulars.get(0),circulars.get(2),circulars.get(1));
         Point p3=intersect(circulars.get(1),circulars.get(2),circulars.get(0));
 
+        /*
         //根据权值来合理计算出位置坐标点
         double sum=circulars.get(0).getR()+circulars.get(1).getR()+circulars.get(2).getR();
 
@@ -100,6 +109,9 @@ public class PositionUtil {
         result.setY((p1.getY()*ps1+p2.getY()*ps2+p3.getY()*ps3)/3);
         if(result.getX()<0||result.getY()<0)
             System.out.print("位置定位失败！重新定位");
+            */
+        result.setX((p1.getX()+p2.getX()+p3.getX())/3);
+        result.setY((p1.getY()+p2.getY()+p3.getY())/3);
         return result;
     }
 
@@ -193,6 +205,7 @@ public class PositionUtil {
     private static double pf(double x){
         return x*x;
     }
+
 
     //根据txPower和Rssi来估算距离
     private  static double calculateAccuracy(int txPower, double rssi) {

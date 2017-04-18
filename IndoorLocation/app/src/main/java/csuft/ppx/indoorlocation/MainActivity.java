@@ -37,8 +37,16 @@ public class MainActivity extends Activity {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                BeaconOperation.getInstance().init(MainActivity.this);
-                BeaconOperation.getInstance().startScanLe(100);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        BeaconOperation.getInstance().init(MainActivity.this);
+                        BeaconOperation.getInstance().startScanLe(100);
+                    }
+                }).start();
+
+
+
             }
         });
     }
