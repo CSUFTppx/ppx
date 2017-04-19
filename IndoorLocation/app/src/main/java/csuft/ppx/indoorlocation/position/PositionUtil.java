@@ -49,14 +49,14 @@ public class PositionUtil {
 
     //根据建模，把每个beacon分别赋予一个坐标点
     private void PointInital(){
-       // BeaconPoints.put("19:18:FC:03:B6:AD",new Point(5,5));
-        BeaconPoints.put("19:18:FC:03:B6:A0",new Point(2.4,4));
-        BeaconPoints.put("19:18:FC:03:B6:AA",new Point(0,0));
-        //BeaconPoints.put("19:18:FC:03:B6:AB",new Point(2.4,12));
+     //   BeaconPoints.put("19:18:FC:03:B6:AD",new Point(2.4,12));
+        BeaconPoints.put("19:18:FC:03:B6:A0",new Point(0,0));
+       // BeaconPoints.put("19:18:FC:03:B6:AA",new Point(0,0));
+        BeaconPoints.put("19:18:FC:03:B6:AB",new Point(2.4,12));
         BeaconPoints.put("19:18:FC:03:B6:C2",new Point(0,8));
-        //BeaconPoints.put("19:18:FC:03:B6:BA",new Point(5,5));
-       BeaconPoints.put("19:18:FC:03:07:D2",new Point(2.4,12.03));
-       // BeaconPoints.put("19:18:FC:03:07:AD",new Point(5,5));
+        BeaconPoints.put("19:18:FC:03:B6:BA",new Point(2.4,4));
+       //BeaconPoints.put("19:18:FC:03:07:D2",new Point(2.4,12));
+       // BeaconPoints.put("19:18:FC:03:07:AD",new Point(2.4,12));
        // BeaconPoints.put("19:18:FC:03:07:A4",new Point(5,5));
     }
     //根据给定的Beacon，把他转化为相对应的圆

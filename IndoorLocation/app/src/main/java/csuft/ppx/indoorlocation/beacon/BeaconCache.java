@@ -89,6 +89,7 @@ public class BeaconCache {
                         beaconList.remove(0);
                         beaconList.remove(beaconList.size() - 1);
                         currentBeacon.rssi = hitTarget(beaconList);
+                        currentBeacon.distance = currentBeacon.calculateAccuracy(currentBeacon.measuredPower, currentBeacon.rssi);
                         result.add(currentBeacon);
                         System.out.println("mac:"+currentBeacon.mac+"   RSSI****************"+currentBeacon.rssi);
                     } else {
@@ -106,6 +107,7 @@ public class BeaconCache {
                 }
                 result = result.subList(0, 3);
                 System.out.println("result size:"+result.size());
+
                 Point point=PositionUtil.getIstance().Position(result);
                 System.out.println("定位坐标为   ("+point.getX()+","+point.getY()+")");
                 cache.clear();//清空缓存区

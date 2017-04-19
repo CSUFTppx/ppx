@@ -106,12 +106,12 @@ public class Beacon {
         beacon.uuid = sb.toString();
 
         //计算距离
-        beacon.distance = calculateAccuracy(beacon.measuredPower, beacon.rssi);
+        beacon.distance = beacon.calculateAccuracy(beacon.measuredPower, beacon.rssi);
 
         return beacon;
     }
 
-    private  static double calculateAccuracy(int txPower, double rssi) {
+    public double calculateAccuracy(int txPower, double rssi) {
         if (rssi == 0) {
             return -1.0; // if we cannot determine accuracy, return -1.
         }
