@@ -12,6 +12,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import csuft.ppx.indoorlocation.beacon.utils.DefaultStaticValues;
+import csuft.ppx.indoorlocation.position.BeaconPoints;
 import csuft.ppx.indoorlocation.position.Point;
 import csuft.ppx.indoorlocation.position.PositionUtil;
 
@@ -24,7 +25,10 @@ public class BeaconCache {
     private static BeaconCache mINSTANCE;
     private static int interval;//刷新间隔
     private static Map<String, List<Beacon>> cache = new HashMap<>();//缓存区
-    private static List<Beacon> result = new ArrayList<>();
+    private static List<Beacon> result = new ArrayList<>();//接受到的所有beacon
+    private static Beacon closeBeacon=null;//距离最近的那个beacon，为缓存
+    private static List<Beacon> ThreeBeacon=new ArrayList<>();//从所有接受到Beacon中赛选到的3个beacon
+    private static String[] closeTwoBeaconMAC=new String[2];
 
     public static BeaconCache getInstance() {
         if (mINSTANCE == null) {
@@ -34,7 +38,7 @@ public class BeaconCache {
     }
 
     private BeaconCache() {
-        interval = 2000;//刷新间隔默认为2s
+        interval = 1000;//刷新间隔默认为2s
         new Looper(interval);
     }
 
@@ -73,6 +77,8 @@ public class BeaconCache {
 
         //执行处理数据任务
         private synchronized void doTask() {
+            //每次清除
+            ThreeBeacon.clear();
             result.clear();
             if (!cache.isEmpty()) {
                 for (List<Beacon> beaconList : cache.values()) {
@@ -93,7 +99,14 @@ public class BeaconCache {
                         result.add(currentBeacon);
                         System.out.println("mac:"+currentBeacon.mac+"   RSSI****************"+currentBeacon.rssi);
                     } else {
-                        Log.i(TAG, "beacon列表过短，丢弃");
+                        Beacon currentBeacon = beaconList.get(0);
+                        //去掉最大值和最小值
+                      //  beaconList.remove(0);
+                       // beaconList.remove(beaconList.size() - 1);
+                        currentBeacon.rssi = hitTarget(beaconList);
+                        currentBeacon.distance = currentBeacon.calculateAccuracy(currentBeacon.measuredPower, currentBeacon.rssi);
+                        result.add(currentBeacon);
+                        System.out.println("mac:"+currentBeacon.mac+"   RSSI****************"+currentBeacon.rssi);
                     }
                 }
                 Collections.sort(result, new Comparator<Beacon>() {
@@ -105,10 +118,31 @@ public class BeaconCache {
                 for (int i = 0; i < result.size(); i++) {
                     System.out.println(result.get(i).mac + " | " + result.get(i).measuredPower + " | " + result.get(i).rssi + " | " + result.get(i).distance);
                 }
-                result = result.subList(0, 3);
-                System.out.println("result size:"+result.size());
+                //获取距离最近的那个beacon
+                Beacon mycloseBeacon=result.get(0);
+                //如果和上一次数据的beacon一样，就无需再计算
+                if(closeBeacon!=null&&mycloseBeacon.mac.equals(closeBeacon.mac)){
 
-                Point point=PositionUtil.getIstance().Position(result);
+                }else{
+                    //不一样就再次获取
+                    closeBeacon=mycloseBeacon;
+                    closeTwoBeaconMAC=BeaconPoints.getAroundBeacon(mycloseBeacon);
+                }
+                //result = result.subList(0, 3);
+                //把距离最近，信号最强的那个首先加入
+                ThreeBeacon.add(mycloseBeacon);
+                for(int i=0;i<result.size();i++){
+                    if(result.get(i).mac.equals(closeTwoBeaconMAC[0])||result.get(i).mac.equals(closeTwoBeaconMAC[1]))
+                        ThreeBeacon.add(result.get(i));
+                }
+
+                //System.out.println("result size:"+result.size());
+                System.out.println("进行计算的3个beacon为:");
+                for(Beacon b: ThreeBeacon){
+                    System.out.println("MAC:"+b.mac);
+                }
+                System.out.println();
+                Point point=PositionUtil.getIstance().Position(ThreeBeacon);
                 System.out.println("定位坐标为   ("+point.getX()+","+point.getY()+")");
                 cache.clear();//清空缓存区
             } else {

@@ -13,17 +13,18 @@ import csuft.ppx.indoorlocation.beacon.Beacon;
 //该类是Beacon的坐标映射类
 public class BeaconPoints {
     //坐标映射集合
-    public static Map<String,Point> BeaconPoints=new HashMap<>();
-    {
-        //   BeaconPoints.put("19:18:FC:03:B6:AD",new Point(2.4,12));
-        BeaconPoints.put("19:18:FC:03:B6:A0",new Point(0,0));
-        // BeaconPoints.put("19:18:FC:03:B6:AA",new Point(0,0));
-        BeaconPoints.put("19:18:FC:03:B6:AB",new Point(2.4,12));
-        BeaconPoints.put("19:18:FC:03:B6:C2",new Point(0,8));
-        BeaconPoints.put("19:18:FC:03:B6:BA",new Point(2.4,4));
-        //BeaconPoints.put("19:18:FC:03:07:D2",new Point(2.4,12));
-        // BeaconPoints.put("19:18:FC:03:07:AD",new Point(2.4,12));
-        // BeaconPoints.put("19:18:FC:03:07:A4",new Point(5,5));
+    public static Map<String,Point> beaconPointModels=new HashMap<>();
+
+    static {
+        //   beaconPointModels.put("19:18:FC:03:B6:AD",new Point(2.4,12));
+        beaconPointModels.put("19:18:FC:03:B6:A0",new Point(0,0));
+         beaconPointModels.put("19:18:FC:03:B6:AA",new Point(2.4,12));
+       // beaconPointModels.put("19:18:FC:03:B6:AB",new Point(2.4,12));
+        beaconPointModels.put("19:18:FC:03:B6:C2",new Point(0,8));
+        beaconPointModels.put("19:18:FC:03:B6:BA",new Point(2.4,4));
+        //beaconPointModels.put("19:18:FC:03:07:D2",new Point(2.4,12));
+        // beaconPointModels.put("19:18:FC:03:07:AD",new Point(2.4,12));
+        // beaconPointModels.put("19:18:FC:03:07:A4",new Point(5,5));
     }
 
     //根据给的Beacon,返回距离最近的两个Beacon的MAC
@@ -35,9 +36,9 @@ public class BeaconPoints {
         String secondMinMAC="";//第二小的距离beacon的MAC
         String[] result=new String[2];
         //得到目标beacon的坐标
-        Point bPoint=BeaconPoints.get(beacon.mac);
+        Point bPoint=beaconPointModels.get(beacon.mac);
         //遍历map,把距离目标点最短的两个MAC拿出来
-        for(Map.Entry<String,Point> entry:BeaconPoints.entrySet()){
+        for(Map.Entry<String,Point> entry:beaconPointModels.entrySet()){
             if(!entry.getKey().equals(beacon.mac)){
                 d=pointsDistance(entry.getValue(),bPoint);
                 if(d<=firstmin){

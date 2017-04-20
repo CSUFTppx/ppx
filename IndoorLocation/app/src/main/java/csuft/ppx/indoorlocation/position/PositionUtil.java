@@ -15,7 +15,7 @@ import csuft.ppx.indoorlocation.beacon.Beacon;
 
 //定位工具类
 public class PositionUtil {
-    private static Map<String,Point> BeaconPoints=new HashMap<>();
+    //private static Map<String,Point> BeaconPoints=new HashMap<>();
     //定义接受到的beacon转化为的圆的arraylist
     private List<Circular> circulars=new ArrayList<>();
     //定义当前的位置
@@ -32,7 +32,7 @@ public class PositionUtil {
 
     private PositionUtil() {
         // TODO Auto-generated constructor stub
-        PointInital();
+        //PointInital();
     }
 
     public Point Position(List<Beacon> beacons){
@@ -47,6 +47,7 @@ public class PositionUtil {
         return point;
     }
 
+    /*
     //根据建模，把每个beacon分别赋予一个坐标点
     private void PointInital(){
      //   BeaconPoints.put("19:18:FC:03:B6:AD",new Point(2.4,12));
@@ -58,7 +59,7 @@ public class PositionUtil {
        //BeaconPoints.put("19:18:FC:03:07:D2",new Point(2.4,12));
        // BeaconPoints.put("19:18:FC:03:07:AD",new Point(2.4,12));
        // BeaconPoints.put("19:18:FC:03:07:A4",new Point(5,5));
-    }
+    }*/
     //根据给定的Beacon，把他转化为相对应的圆
     private static Circular toCircular(Beacon beacon){
         Circular c=null;
@@ -70,8 +71,11 @@ public class PositionUtil {
         //根据，uuId来获取圆心
         String MAC=beacon.mac;
         //根据MAC来获取当前Beacon的坐标的
-        X=BeaconPoints.get(MAC).getX();
-        Y=BeaconPoints.get(MAC).getY();
+        //X=BeaconPoints.get(MAC).getX();
+        //Y=BeaconPoints.get(MAC).getY();
+        System.out.println("当前转化的Beacon MAC为:"+MAC);
+        X=BeaconPoints.beaconPointModels.get(MAC).getX();
+        Y=BeaconPoints.beaconPointModels.get(MAC).getY();
         if(X==-1||Y==-1){
             System.out.print("出错");
             return null;
